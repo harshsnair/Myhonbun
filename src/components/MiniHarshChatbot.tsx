@@ -19,6 +19,74 @@ export interface ChatMessage {
   timestamp: string;
 }
 
+export function getOfflineMiniHarshReply(userMessage: string): string {
+  const lower = userMessage.toLowerCase();
+
+  if (lower.includes('miss')) {
+    const missReplies = [
+      "I miss you so much more, Akshara! Every second we're apart feels like an eternity. Close your eyes for a second—I'm right there hugging you from behind with my chin on your shoulder. ❤️",
+      "Akshara, my sweet girl, I miss your laugh, your pout, and just hearing your voice. Whenever you miss me, remember you are my home and I'm always thinking of you! 💕",
+      "Missing you is my heart's full-time job today, Akshara. Counting down the seconds until I can hold your hands and tell you in person how much I cherish every moment with you.",
+    ];
+    return missReplies[Math.floor(Math.random() * missReplies.length)];
+  }
+
+  if (
+    lower.includes('hard') ||
+    lower.includes('tired') ||
+    lower.includes('sad') ||
+    lower.includes('cry') ||
+    lower.includes('bad day') ||
+    lower.includes('overwhelm') ||
+    lower.includes('stressed')
+  ) {
+    const comfortReplies = [
+      "Come here, Akshara. Put your head against my chest. Whatever happened today, you don't have to carry it all by yourself. You are my safe space, and I am yours. Take a slow, deep breath with me... you're doing amazing, my love. 🫂🕊️",
+      "I'm so sorry today was tough on you, Akshara. Please let your shoulders drop and relax your face. You are the strongest, kindest girl I know, but you don't have to be strong right now. I've got you. Always. 💖",
+      "Akshara, remember what I promised in my letter: you can come to me when you're not okay, when your eyes are filled with tears, and I will hold you until you feel a little more okay. I'm right here with you. ❤️",
+    ];
+    return comfortReplies[Math.floor(Math.random() * comfortReplies.length)];
+  }
+
+  if (
+    lower.includes('why do you love') ||
+    lower.includes('reasons') ||
+    lower.includes('why me')
+  ) {
+    const reasonReplies = [
+      "Why do I love you, Akshara? Because the way your eyes crinkle when you laugh, the way you make me feel so safe and understood, and the pure warmth of your heart. In 3 months, you've turned my whole world into something extraordinary. 🌸",
+      "Because you are my home, Akshara. I love your goofy side, your quiet moments, and the absolute trust we share. There is nobody else on this planet I would rather choose every single day.",
+      "I love you because you are unapologetically yourself with me, Akshara. When I look at you, my entire heart feels steady. You are everything I ever wished for and more. ✨",
+    ];
+    return reasonReplies[Math.floor(Math.random() * reasonReplies.length)];
+  }
+
+  if (lower.includes('kiss') || lower.includes('smooch')) {
+    return "*pulls you in close and gives you the warmest, softest kiss on your forehead, then boops your nose* You are my prettiest girl, Akshara! Muah! 💋✨";
+  }
+
+  if (lower.includes('hug') || lower.includes('cuddle')) {
+    return "*wraps both arms around you, pulls you into my oversized hoodie, and rests my chin on your head* You're never letting go, and neither am I, Akshara! 🧸❤️";
+  }
+
+  if (lower.includes('love you') || lower.includes('i love u')) {
+    const loveReplies = [
+      "I love you more than words, emojis, or three whole lifetimes could ever capture, Akshara! Happy 3-month anniversary, my whole heart! 💖",
+      "I love you with every single beat of my heart, Akshara. Choosing you is the easiest, best decision I make every morning and night. ❤️✨",
+      "Akshara, my love for you has no expiration date, no doubts, and no limits. Forever and always, my baby. 💕",
+    ];
+    return loveReplies[Math.floor(Math.random() * loveReplies.length)];
+  }
+
+  const genericReplies = [
+    "Akshara, you bring so much joy into my life. Even on days when everything feels noisy, hearing your thoughts brings me right back to serenity. Tell me more, my love! ♡",
+    "You have no idea how much I adore you, Akshara. Every little detail of your day matters to me. How did today treat my favorite human?",
+    "Every time I think about our past 3 months together, I just smile like an idiot. You are my greatest blessing, Akshara. What would you like to talk about next, gorgeous? 🥰",
+    "I'm listening so closely, Akshara! Remember that no matter where you are or what's going on, you're the first thing on my mind and the last thing in my prayers every day. 🌹",
+  ];
+  return genericReplies[Math.floor(Math.random() * genericReplies.length)];
+}
+
 interface MiniHarshChatbotProps {
   isOpen: boolean;
   onClose: () => void;
@@ -110,14 +178,16 @@ export const MiniHarshChatbot: React.FC<MiniHarshChatbotProps> = ({
       setMessages((prev) => [...prev, modelReply]);
       romanticAudio.playChime();
     } catch (err) {
-      console.error(err);
+      console.warn('API endpoint unavailable (likely running statically on GitHub Pages). Using in-character Mini Harsh response.');
+      const offlineReply = getOfflineMiniHarshReply(text);
       const fallbackMsg: ChatMessage = {
         id: `model-${Date.now()}`,
         role: 'model',
-        text: "Akshara, my love! Even if the signal drops for a second, my heart never drops yours. I'm right here holding you tight, my safe space. I love you so much! 🫂❤️",
+        text: offlineReply,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, fallbackMsg]);
+      romanticAudio.playChime();
     } finally {
       setIsLoading(false);
     }
